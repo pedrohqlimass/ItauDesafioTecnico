@@ -1,5 +1,6 @@
 package dev.pedrohqlimass.itauDesafio.controller;
 
+import dev.pedrohqlimass.itauDesafio.docs.TransacaoControllerDoc;
 import dev.pedrohqlimass.itauDesafio.dto.TransacaoRequest;
 import dev.pedrohqlimass.itauDesafio.repository.TransacaoRepository;
 import dev.pedrohqlimass.itauDesafio.service.TransacaoService;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/transacao")
-public class TransacaoController {
+public class TransacaoController implements TransacaoControllerDoc {
 
     @Autowired
     private TransacaoService transacaoService;
@@ -22,14 +23,14 @@ public class TransacaoController {
 
     @PostMapping
     public ResponseEntity adicionar (@RequestBody TransacaoRequest transacaoRequest) {
-
+        log.info("Enviada requisição de transação para o servidor");
         try{
             transacaoService.validarTransacao(transacaoRequest);
             transacaoRepository.salvarTransacoes(transacaoRequest);
             return ResponseEntity.status(HttpStatus.CREATED).build();
 
         } catch (IllegalArgumentException exception) {
-            log.error("Parâmetros inválidos. Regras: valdo deve ser maior que 0 (recebido: " + transacaoRequest.getValor()
+            log.error("Parâmetros inválidos. Regras: valor deve ser maior que 0 (recebido: " + transacaoRequest.getValor()
                     + "), dataHora deve ser igual ou anterior à hora atual (recebido: " + transacaoRequest.getDataHora() + ")");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         } catch (Exception e) {
